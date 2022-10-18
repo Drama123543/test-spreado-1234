@@ -1,24 +1,29 @@
-import logo from './logo.svg';
+import React, {FC} from 'react';
+import {QueryClient, QueryClientProvider} from 'react-query';
+import {Provider as ReduxProvider} from 'react-redux';
+import {combineReducers, createStore} from 'redux';
+import { composeWithDevTools } from '@redux-devtools/extension';
+import {SpreadoSetupProvider} from 'spreado';
+import {
+  spreadoReduxReducerPack,
+  SpreadoSetupForReduxReactQuery
+} from 'spreado/for-redux-react-query';
 import './App.css';
+import { ComponentA } from './ComponentA';
+
+const store = createStore(combineReducers(spreadoReduxReducerPack), composeWithDevTools());
+const queryClient = new QueryClient();
+const spreadoSetup = new SpreadoSetupForReduxReactQuery({store, queryClient});
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <ReduxProvider store={store}>
+      <QueryClientProvider client={queryClient}>
+        <SpreadoSetupProvider setup={spreadoSetup}>
+          <ComponentA />
+        </SpreadoSetupProvider>
+      </QueryClientProvider>
+    </ReduxProvider>
   );
 }
 
